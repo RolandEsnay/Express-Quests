@@ -109,8 +109,26 @@ const deleteUser = (req, res) => {
 const database = require("./database");
 
 const getUsers = (req, res) => {
-  database;
-  res.status(200).json(users);
+  let sql = "select * from users";
+  let sqlValues = [];
+
+    if (req.query.language != null) {
+        sql += " where language = ?";
+        sqlValues.push(req.query.language);
+        if (req.query.city != null) {
+          sql += " and city = ?";
+          sqlValues.push(req.query.city);
+        }
+      } else if (req.query.city != null) {
+        sql += " where city = ?";
+        sqlValues.push(req.query.city);
+      }
+
+      database
+    .query(sql, sqlValues)
+    .then(([users]) => {
+      res.json(users);
+    })
 };
 
 const getUserById = (req, res) => {
